@@ -10,7 +10,7 @@ app = Flask(__name__)
 api = Api(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
-
+BASE = "http://127.0.0.1:5000/"
 
 class BookModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -107,7 +107,7 @@ class Book(Resource):
 
         db.session.delete(book_to_delete)
         db.session.commit()
-        return 204
+        return 200
 
 
 def excel_to_db():
@@ -127,15 +127,47 @@ def excel_to_db():
         print(response.json())
 
 
+def create(id, data):
+    response = requests.put(BASE + "book/" + id, data)
+    return response
+
+
+def read(id):
+    response = requests.get(BASE + "book/" + id)
+    return response
+
+
+def update(id, data):
+    response = requests.patch(BASE + "book/" + id, data)
+    return response
+
+
+def delete_(id):
+    response = requests.delete(BASE + "book/" + str(id))
+    return response
+
+
+def delete_range(start_id, end_id):
+    for i in range(start_id, end_id + 1):
+        requests.delete(BASE + "book/" + str(i))
+
+
+def create_test_case(id):
+    data = {"name": "test", "type": "test", "author": "test test", "page_count": 1, "genre": "test",
+            "progress": "test"}
+    response = requests.put(BASE + "book/" + str(id), data)
+
 # USING CRUD COMMANDS TO MANIPULATE DATABASE
 ########################################################################################################################
 
 # import requests
 #
 # BASE = "http://127.0.0.1:5000/"
-# data = {"name": "The Hitchhiker's Guide to the Galaxy", "type":novel, "author":Douglas Adams, "page_count": 69,
-#         "genre": Science Fiction, "progress": Complete}
-# response = requests.put(BASE + "book/i", data)
+#
+# response = requests.put/patch(BASE + "book/i", data)
+# or
+# response = requests.get/delete(BASE + "book/i")
+
 # print(response.json())
 
 ########################################################################################################################
